@@ -13,14 +13,14 @@ import com.google.gson.JsonObject;
 /**
  * sheetsAPI
  */
-public class databaseFetch {
+public class GoogleSheetsFetch {
     private static String URL_TO_JSON = "https://script.google.com/macros/s/AKfycbyVrQLgySXjwK_s0C9CEYeH5H2F7tYbuehlDGPMFmWmjkXHtareUUlVwVSaHYPeoAQoTw/exec";
 
 
-    public static ArrayList<food> foodCollection () {
+    public static ArrayList<Food> foodCollection () {
 
-        ArrayList<food> foodList = new ArrayList<food>();
-        food currentFood;
+        ArrayList<Food> foodList = new ArrayList<Food>();
+        Food currentFood;
 
         try {
             //Opens connection to url and sets the request method to GET
@@ -47,9 +47,9 @@ public class databaseFetch {
             for(int i = 0; i < array.size(); i++) {
                 JsonObject current = array.get(i).getAsJsonObject();
                 if(!current.get("Extra").getAsString().equals(null)) {
-                    currentFood = new food(current.get("Name").getAsString(), current.get("BBDMin").getAsInt(), current.get("BBDMax").getAsInt(), current.get("Extra").getAsString());
+                    currentFood = new Food(current.get("Name").getAsString(), current.get("BBDMin").getAsString(), current.get("BBDMax").getAsString(), current.get("Extra").getAsString());
                 } else
-                    currentFood = new food(current.get("Name").getAsString(), current.get("BBDMin").getAsInt(), current.get("BBDMax").getAsInt());
+                    currentFood = new Food(current.get("Name").getAsString(), current.get("BBDMin").getAsString(), current.get("BBDMax").getAsString());
 
                 foodList.add(currentFood);
             }
