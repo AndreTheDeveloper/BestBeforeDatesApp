@@ -44,7 +44,7 @@ public class SavedListAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
         view = inflater.inflate(R.layout.activity_saved_list_view, null);
         TextView foodTitle = (TextView) view.findViewById(R.id.savedFoodTitle);
-        foodTitle.setText(savedFoodList.get(i).getName());
+        foodTitle.setText(savedFoodList.get(i).getName() + " Extra: " + savedFoodList.get(i).getExtra());
         return view;
     }
 }
