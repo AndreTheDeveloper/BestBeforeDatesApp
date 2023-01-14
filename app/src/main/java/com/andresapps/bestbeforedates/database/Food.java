@@ -49,4 +49,6 @@ public class Food {
     public String getDate_added() {
         return date_added;
     }
+
+    public int getId() { return id; }
 }

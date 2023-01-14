@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public final class LocalDatabase {
 
@@ -34,7 +35,7 @@ public final class LocalDatabase {
         private static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + DatabaseEntry.TABLE_NAME;
     }
 
-    public class DatabaseHelper extends SQLiteOpenHelper {
+    public static class DatabaseHelper extends SQLiteOpenHelper {
         public static final int DATABASE_VERSION = 1;
         public static final String DATABASE_NAME = "SelectedFoods.db";
         private final Context context;
@@ -57,9 +58,8 @@ public final class LocalDatabase {
             return this.context;
         }
 
-        public void insert(String food_name, String bBDMin, String bBDMax, String extra, String date_added) {
-            DatabaseHelper dbHelper = new DatabaseHelper(getContext());
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
+        public boolean insert(String food_name, String bBDMin, String bBDMax, String extra, String date_added) {
+            SQLiteDatabase db = this.getWritableDatabase();
 
             ContentValues values = new ContentValues();
             values.put(DatabaseEntry.COLUMN_NAME_FOODNAME, food_name);
@@ -68,12 +68,12 @@ public final class LocalDatabase {
             values.put(DatabaseEntry.COLUMN_NAME_EXTRA, extra);
             values.put(DatabaseEntry.COLUMN_NAME_CD, date_added);
 
-            long newRowId = db.insert(DatabaseEntry.TABLE_NAME,null,values);
+            db.insert(DatabaseEntry.TABLE_NAME,null,values);
+            return true;
         }
 
-        public void read() {
-            DatabaseHelper dbHelper = new DatabaseHelper(getContext());
-            SQLiteDatabase db = dbHelper.getReadableDatabase();
+        public List<Food> read() {
+            SQLiteDatabase db = this.getReadableDatabase();
             ArrayList<Food> savedFoodList = new ArrayList<Food>();
 
             String[] projection = {
@@ -111,6 +111,17 @@ public final class LocalDatabase {
                 Food current = new Food(id,foodName,bbdmin,bbdmax,extra,date_added);
                 savedFoodList.add(current);
             }
+            cursor.close();
+            return savedFoodList;
+        }
+        public void deleteAll() {
+            SQLiteDatabase db = this.getWritableDatabase();
+            db.execSQL("delete from " + DatabaseEntry.TABLE_NAME);
+        }
+
+        public void deleteRow(int id) {
+            SQLiteDatabase db = this.getWritableDatabase();
+            db.delete(DatabaseEntry.TABLE_NAME,"_id=?", new String[]{String.valueOf(id)});
         }
     }
 }
