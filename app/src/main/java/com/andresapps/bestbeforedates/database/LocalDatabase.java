@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public final class LocalDatabase {
@@ -122,6 +123,11 @@ public final class LocalDatabase {
         public void deleteRow(int id) {
             SQLiteDatabase db = this.getWritableDatabase();
             db.delete(DatabaseEntry.TABLE_NAME,"_id=?", new String[]{String.valueOf(id)});
+        }
+
+        public void test() {
+            Date cd = new Date();
+            insert("Apples", "25", "30","Fridge", cd.toString());
         }
     }
 }
