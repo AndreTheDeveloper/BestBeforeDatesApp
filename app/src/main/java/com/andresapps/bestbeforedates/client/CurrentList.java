@@ -24,16 +24,21 @@ public class CurrentList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_current_list);
 
-        GoogleSheetsRunnable runnable = new GoogleSheetsRunnable();
-        Thread thread = new Thread(runnable);
-        thread.start();
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            Log.e("list", e.toString());
-        }
-        savedList = runnable.getFoodFromName("Bananas");
-        Log.e("list", String.valueOf(savedList.size()));
+        Food food = new Food(1,"Apples","7","10", "fresh","2023-01-31");
+        savedList.add(food);
+
+
+
+
+//        GoogleSheetsRunnable runnable = new GoogleSheetsRunnable();
+//        Thread thread = new Thread(runnable);
+//        thread.start();
+//        try {
+//            thread.join();
+//        } catch (InterruptedException e) {
+//            Log.e("list", e.toString());
+//        }
+//        savedList = runnable.getFoodFromName("Bananas");
 
         lv = (ListView) findViewById(R.id.currentListView);
         SavedListAdapter adapter = new SavedListAdapter(getApplicationContext(),savedList);
