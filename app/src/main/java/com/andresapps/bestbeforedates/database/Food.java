@@ -7,28 +7,19 @@ public class Food {
     private String bbdmax;
     private String extra;
     private String date_added;
+    private int selected;
 
-    public Food(String name, String bbdmin, String bbdmax, String extra) {
-        this.name = name;
-        this.bbdmin = bbdmin;
-        this.bbdmax = bbdmax;
-        this.extra = extra;
-    }
-
-    public Food(String name, String bbdmin, String bbdmax) {
-        this.name = name;
-        this.bbdmin = bbdmin;
-        this.bbdmax = bbdmax;
-    }
-
-    public Food(int id, String name, String bbdmin, String bbdmax, String extra, String date_added) {
+    public Food(int id, String name, String bbdmin, String bbdmax, String extra, int selected, String date_added) {
         this.id = id;
         this.name = name;
         this.bbdmin = bbdmin;
         this.bbdmax = bbdmax;
         this.extra = extra;
+        this.selected = selected;
         this.date_added = date_added;
     }
+
+    public int getSelected() { return selected; }
 
     public String getName() {
         return name;

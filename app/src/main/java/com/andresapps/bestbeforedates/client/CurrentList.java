@@ -2,20 +2,22 @@ package com.andresapps.bestbeforedates.client;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ListView;
 
 import com.andresapps.bestbeforedates.R;
 import com.andresapps.bestbeforedates.database.Food;
-import com.andresapps.bestbeforedates.database.GoogleSheetsRunnable;
+import com.andresapps.bestbeforedates.database.GoogleSheetsFetch;
 import com.andresapps.bestbeforedates.database.LocalDatabase;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CurrentList extends AppCompatActivity {
-    LocalDatabase.DatabaseHelper db = new LocalDatabase.DatabaseHelper(this);
     List<Food> savedList = new ArrayList<Food>();
 
     ListView lv;
@@ -24,25 +26,32 @@ public class CurrentList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_current_list);
 
-        Food food = new Food(1,"Apples","7","10", "fresh","2023-01-31");
-        savedList.add(food);
+        FloatingActionButton addBttn = (FloatingActionButton) findViewById(R.id.addBttn);
+        addBttn.setOnClickListener(view -> startActivity(new Intent(CurrentList.this, AddNew.class)));
 
 
 
+        LocalDatabase.DatabaseHelper dbHelper = new LocalDatabase.DatabaseHelper(this);
+        if(dbHelper.read().size() == 0) {
+            try {
+                dbHelper.fetchAndInsertFromGoogle();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
 
-//        GoogleSheetsRunnable runnable = new GoogleSheetsRunnable();
-//        Thread thread = new Thread(runnable);
-//        thread.start();
-//        try {
-//            thread.join();
-//        } catch (InterruptedException e) {
-//            Log.e("list", e.toString());
-//        }
-//        savedList = runnable.getFoodFromName("Bananas");
+        //dbHelper.deleteAllRows();
+        //dbHelper.test();
+        savedList = dbHelper.read();
+        Log.e("list", String.valueOf(savedList.size()));
 
-        lv = (ListView) findViewById(R.id.currentListView);
-        SavedListAdapter adapter = new SavedListAdapter(getApplicationContext(),savedList);
-        lv.setAdapter(adapter);
+
+//        savedList = dbHelper.read();
+//        Log.e("list", savedList.get(0).getName());
+
+//        lv = findViewById(R.id.currentListView);
+//        SavedListAdapter adapter = new SavedListAdapter(getApplicationContext(),savedList);
+//        lv.setAdapter(adapter);
 
     }
 }

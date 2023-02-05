@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -59,9 +60,12 @@ public class SavedListAdapter extends BaseAdapter {
         bar = (ProgressBar) view.findViewById(R.id.simpleProgressBar);
         bar.setMax(Integer.parseInt(savedFoodList.get(i).getBbdmax()));
 
-        int daysUntilExpired = (int) Duration.between(LocalDate.now().atStartOfDay(), LocalDate.parse(savedFoodList.get(i).getDate_added()).atStartOfDay()).toDays();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate now = LocalDate.now().plusDays(10);
+        LocalDate date_added = LocalDate.parse(savedFoodList.get(i).getDate_added(), formatter);
+
+        int daysUntilExpired = (int) Duration.between(date_added.atStartOfDay(), now.atStartOfDay()).toDays();
         bar.setProgress(daysUntilExpired);
-        Log.e("list", String.valueOf(bar.getProgress()));
         return view;
     }
 }

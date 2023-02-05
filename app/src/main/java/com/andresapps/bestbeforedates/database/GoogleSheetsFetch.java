@@ -1,6 +1,7 @@
 package com.andresapps.bestbeforedates.database;
 
 import android.util.Log;
+import android.view.View;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -16,7 +17,7 @@ import com.google.gson.JsonObject;
  * sheetsAPI
  */
 public class GoogleSheetsFetch {
-    private static String URL_TO_JSON = "https://script.google.com/macros/s/AKfycbyVrQLgySXjwK_s0C9CEYeH5H2F7tYbuehlDGPMFmWmjkXHtareUUlVwVSaHYPeoAQoTw/exec";
+    private static String URL_TO_JSON = "https://script.google.com/macros/s/AKfycbxKJ_WoqhbhNwwMtUu_OgqHQ0sw31dozhgx4Vk2QsqhMoadkI2u4O9QGb5gj1pGQY8rUg/exec";
 
 
     public static ArrayList<Food> foodCollection () {
@@ -25,6 +26,7 @@ public class GoogleSheetsFetch {
         Food currentFood;
 
         try {
+
             //Opens connection to url and sets the request method to GET
             URL url = new URL(URL_TO_JSON);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -48,15 +50,18 @@ public class GoogleSheetsFetch {
             JsonArray array = json.getAsJsonObject().get("data").getAsJsonArray();
             for(int i = 0; i < array.size(); i++) {
                 JsonObject current = array.get(i).getAsJsonObject();
-                if(!current.get("Extra").getAsString().equals(null)) {
-                    currentFood = new Food(current.get("Name").getAsString(), current.get("BBDMin").getAsString(), current.get("BBDMax").getAsString(), current.get("Extra").getAsString());
-                } else
-                    currentFood = new Food(current.get("Name").getAsString(), current.get("BBDMin").getAsString(), current.get("BBDMax").getAsString());
-
+                currentFood = new Food(
+                        current.get("_ID").getAsInt(),
+                        current.get("Name").getAsString(),
+                        current.get("BBDMin").getAsString(),
+                        current.get("BBDMax").getAsString(),
+                        current.get("Extra").getAsString(),
+                        current.get("Selected").getAsInt(),
+                        current.get("DateAdded").getAsString());
                 foodList.add(currentFood);
             }
         }  catch (Exception e) {
-            e.printStackTrace();
+           Log.e("list", String.valueOf(e));
         }
 
         return foodList;
