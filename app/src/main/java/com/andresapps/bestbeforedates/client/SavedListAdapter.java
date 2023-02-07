@@ -22,6 +22,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class SavedListAdapter extends BaseAdapter {
 
@@ -54,14 +55,17 @@ public class SavedListAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
         view = inflater.inflate(R.layout.activity_saved_list_view, null);
         TextView foodTitle = (TextView) view.findViewById(R.id.savedFoodTitle);
-        foodTitle.setText(savedFoodList.get(i).getName() + " Extra: " + savedFoodList.get(i).getExtra());
+        if(savedFoodList.get(i).getExtra().length() > 0)
+            foodTitle.setText(savedFoodList.get(i).getExtra().substring(0,1).toUpperCase(Locale.ROOT) + savedFoodList.get(i).getExtra().substring(1) + " " + savedFoodList.get(i).getName());
+        else
+            foodTitle.setText(savedFoodList.get(i).getName());
 
         ProgressBar bar;
         bar = (ProgressBar) view.findViewById(R.id.simpleProgressBar);
         bar.setMax(Integer.parseInt(savedFoodList.get(i).getBbdmax()));
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate now = LocalDate.now().plusDays(10);
+        LocalDate now = LocalDate.now().plusDays(5);
         LocalDate date_added = LocalDate.parse(savedFoodList.get(i).getDate_added(), formatter);
 
         int daysUntilExpired = (int) Duration.between(date_added.atStartOfDay(), now.atStartOfDay()).toDays();

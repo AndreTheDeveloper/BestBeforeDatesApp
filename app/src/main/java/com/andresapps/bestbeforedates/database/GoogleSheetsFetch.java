@@ -17,7 +17,7 @@ import com.google.gson.JsonObject;
  * sheetsAPI
  */
 public class GoogleSheetsFetch {
-    private static String URL_TO_JSON = "https://script.google.com/macros/s/AKfycbxKJ_WoqhbhNwwMtUu_OgqHQ0sw31dozhgx4Vk2QsqhMoadkI2u4O9QGb5gj1pGQY8rUg/exec";
+    private static String URL_TO_JSON = "https://script.google.com/macros/s/AKfycbx2uP88u1hIYUrJwgC3_eD3IzNn_9jhsqo1quUSqYj45LiGoXm01j8nTPaBtboC0E_Ofg/exec";
 
 
     public static ArrayList<Food> foodCollection () {
@@ -56,7 +56,6 @@ public class GoogleSheetsFetch {
                         current.get("BBDMin").getAsString(),
                         current.get("BBDMax").getAsString(),
                         current.get("Extra").getAsString(),
-                        current.get("Selected").getAsInt(),
                         current.get("DateAdded").getAsString());
                 foodList.add(currentFood);
             }

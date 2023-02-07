@@ -44,13 +44,11 @@ public final class LocalDatabase {
     }
 
     public static class DatabaseHelper extends SQLiteOpenHelper {
-        public static final int DATABASE_VERSION = 2;
+        public static final int DATABASE_VERSION = 3;
         public static final String DATABASE_NAME = "SelectedFoods.db";
-        //private final Context context;
 
         public DatabaseHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
-            //this.context = context;
         }
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(DatabaseEntry.SQL_CREATE_ENTRIES);
@@ -62,11 +60,8 @@ public final class LocalDatabase {
         public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             onUpgrade(db, oldVersion, newVersion);
         }
-//        public Context getContext() {
-//            return this.context;
-//        }
 
-        public boolean insert(String food_name, String bBDMin, String bBDMax, String extra, int selected, String date_added) {
+        public boolean insert(String food_name, String bBDMin, String bBDMax, String extra,String date_added) {
             SQLiteDatabase db = this.getWritableDatabase();
 
             ContentValues values = new ContentValues();
@@ -74,7 +69,6 @@ public final class LocalDatabase {
             values.put(DatabaseEntry.COLUMN_NAME_BBDMIN, bBDMin);
             values.put(DatabaseEntry.COLUMN_NAME_BBDMAX, bBDMax);
             values.put(DatabaseEntry.COLUMN_NAME_EXTRA, extra);
-            values.put(DatabaseEntry.COLUMN_NAME_SELECTED, selected);
             values.put(DatabaseEntry.COLUMN_NAME_CD, date_added);
 
             db.insert(DatabaseEntry.TABLE_NAME,null,values);
@@ -99,7 +93,7 @@ public final class LocalDatabase {
 
                 if(newFoods.size() != 0) {
                     for (Food food : newFoods) {
-                        insert(food.getName(), food.getBbdmin(), food.getBbdmax(), food.getExtra(), food.getSelected(), food.getDate_added());
+                        insert(food.getName(), food.getBbdmin(), food.getBbdmax(), food.getExtra(), food.getDate_added());
                     }
                 }
 
@@ -116,7 +110,6 @@ public final class LocalDatabase {
                     DatabaseEntry.COLUMN_NAME_BBDMIN,
                     DatabaseEntry.COLUMN_NAME_BBDMAX,
                     DatabaseEntry.COLUMN_NAME_EXTRA,
-                    DatabaseEntry.COLUMN_NAME_SELECTED,
                     DatabaseEntry.COLUMN_NAME_CD
             };
 
@@ -141,11 +134,9 @@ public final class LocalDatabase {
                         cursor.getColumnIndexOrThrow(DatabaseEntry.COLUMN_NAME_BBDMAX));
                 String extra = cursor.getString(
                         cursor.getColumnIndexOrThrow(DatabaseEntry.COLUMN_NAME_EXTRA));
-                int selected = cursor.getInt(
-                        cursor.getColumnIndexOrThrow(DatabaseEntry.COLUMN_NAME_SELECTED));
                 String date_added = cursor.getString(
                         cursor.getColumnIndexOrThrow(DatabaseEntry.COLUMN_NAME_CD));
-                Food current = new Food(id,foodName,bbdmin,bbdmax,extra,selected,date_added);
+                Food current = new Food(id,foodName,bbdmin,bbdmax,extra,date_added);
                 savedFoodList.add(current);
             }
             cursor.close();
@@ -156,6 +147,40 @@ public final class LocalDatabase {
             db.execSQL("DROP TABLE IF EXISTS " + DatabaseEntry.TABLE_NAME);
         }
 
+        public List<Food> searchByName(String name) {
+            SQLiteDatabase db = this.getReadableDatabase();
+
+            Cursor cursor = db.query(
+                    DatabaseEntry.TABLE_NAME,
+                    null,
+                    DatabaseEntry.COLUMN_NAME_FOODNAME + "=?",
+                    new String[]{name},
+                    null,
+                    null,
+                    null
+            );
+            List<Food> foundList = new ArrayList<>();
+
+            while(cursor.moveToNext()) {
+                int id = cursor.getInt(
+                        cursor.getColumnIndexOrThrow(DatabaseEntry._ID));
+                String foodName = cursor.getString(
+                        cursor.getColumnIndexOrThrow(DatabaseEntry.COLUMN_NAME_FOODNAME));
+                String bbdmin = cursor.getString(
+                        cursor.getColumnIndexOrThrow(DatabaseEntry.COLUMN_NAME_BBDMIN));
+                String bbdmax = cursor.getString(
+                        cursor.getColumnIndexOrThrow(DatabaseEntry.COLUMN_NAME_BBDMAX));
+                String extra = cursor.getString(
+                        cursor.getColumnIndexOrThrow(DatabaseEntry.COLUMN_NAME_EXTRA));
+                String date_added = cursor.getString(
+                        cursor.getColumnIndexOrThrow(DatabaseEntry.COLUMN_NAME_CD));
+                Food current = new Food(id,foodName,bbdmin,bbdmax,extra,date_added);
+                foundList.add(current);
+            }
+            cursor.close();
+            return foundList;
+        }
+
         public void deleteAllRows() {
             SQLiteDatabase db = this.getWritableDatabase();
             db.execSQL("DELETE from " + DatabaseEntry.TABLE_NAME);
@@ -164,10 +189,6 @@ public final class LocalDatabase {
         public void deleteRow(int id) {
             SQLiteDatabase db = this.getWritableDatabase();
             db.delete(DatabaseEntry.TABLE_NAME,"_id=?", new String[]{String.valueOf(id)});
-        }
-
-        public void test() {
-            insert("Apples", "25", "30","Fridge", 1, String.valueOf(LocalDate.now()));
         }
     }
 }
